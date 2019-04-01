@@ -1,13 +1,15 @@
 ﻿
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
-using TaskManager.Tools;
+using System.Runtime.CompilerServices;
+using TaskManager.Annotations;
 using TaskManager.Tools.Managers;
 
 namespace TaskManager.Models
 {
-    class MyProcess : BaseViewModel
+    class MyProcess :  Process, INotifyPropertyChanged
     {
         #region Fields
         private MyProcess _selectedProcess;
@@ -19,7 +21,7 @@ namespace TaskManager.Models
         private int _threadsCount;//Process.GetCurrentProcess().Threads.Count ?
         private string _userName;
         private string _path;
-        private DateTime _proccesTime;
+        private DateTime? _processTime;
 
         private ProcessModuleCollection _modules;
         private ProcessThreadCollection _processThreads;
@@ -27,7 +29,18 @@ namespace TaskManager.Models
 
         #region Properties
 
-      
+        internal MyProcess(Process process)
+        {
+           
+            Name = process.ProcessName;
+            Id = process.Id;
+            ThreadsCount = process.Threads.Count;
+            UserName = process.MachineName; //UserName = Environment.UserName,
+            SetPathName(process);
+            SetProcessTime(process);
+            // IsActive = false;
+
+        }
         public string Name
         {
             get => _name;
@@ -39,7 +52,24 @@ namespace TaskManager.Models
 
         }
 
-        public int Id { get; set; }
+        public int Id
+        {
+            get => _id;
+            set
+            {
+                _id = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool IsActive
+        {
+            get => _isActive;
+            set
+            {
+                _isActive = value;
+                OnPropertyChanged();
+            }
+        }
 
         public double CPU
         {
@@ -94,12 +124,12 @@ namespace TaskManager.Models
                 OnPropertyChanged();
             }
         }
-        public DateTime ProccesTime
+        public DateTime? ProcessTime
         {
-            get { return _proccesTime; }
+            get { return _processTime; }
             set
             {
-                _proccesTime = value;
+                _processTime = value;
                 OnPropertyChanged();
             }
         }
@@ -129,7 +159,39 @@ namespace TaskManager.Models
         {
             StationManager.CurrentProcess.Kill();
         }
-        //void openFolder;
 
+        private void SetPathName(Process process)
+        {
+            try
+            {
+                _path = process.MainModule.FileName;
+            }
+            catch (Win32Exception)
+            {
+                _path = "Access denied.";
+
+            }
+
+        }
+
+        private void SetProcessTime(Process process)
+        {
+            try
+            {
+                ProcessTime = process.StartTime;
+            }
+            catch (Win32Exception)
+            {
+
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

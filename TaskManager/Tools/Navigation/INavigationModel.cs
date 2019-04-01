@@ -3,8 +3,7 @@ namespace TaskManager.Tools.Navigation
 {
     internal enum ViewType
     {
-        TaskManager,
-        
+        TaskManager
     }
 
     interface INavigationModel

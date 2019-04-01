@@ -4,16 +4,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="650" d:DesignWidth="800">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="500"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
-        <StatusBar Grid.Row="0" Height="30" HorizontalAlignment="Stretch">
+        <StatusBar Grid.ColumnSpan="2" Grid.Row="0" Height="30" HorizontalAlignment="Stretch">
+
             <Label HorizontalAlignment="Center"  VerticalAlignment="Center"  Content="Sort: "></Label>
-           <ComboBox SelectedIndex="{Binding SortIndex,  UpdateSourceTrigger=PropertyChanged}"  Height="30" VerticalAlignment="Top">
+            <ComboBox SelectedIndex="{Binding SortIndex,  UpdateSourceTrigger=PropertyChanged}"  Height="30" VerticalAlignment="Top">
                 <TextBlock>Name</TextBlock>
                 <TextBlock>Id</TextBlock>
                 <TextBlock>CPU</TextBlock>
@@ -23,30 +28,38 @@
                 <TextBlock>User Name</TextBlock>
             </ComboBox>
         </StatusBar>
-        <DataGrid Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center"  ItemsSource="{Binding Processes, Mode=OneWay}" SelectedItem ="{Binding SelectedProcess}" AutoGenerateColumns="False"  >
+        <DataGrid Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center"  ItemsSource="{Binding Processes, Mode=OneWay}" SelectedItem ="{Binding SelectedProcess, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False"  >
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name"  Binding="{Binding Name}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Is Active"  IsReadOnly="True" Binding="{Binding IsActive}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Id" Binding="{Binding Id}"></DataGridTextColumn>
                 <DataGridTextColumn Header="CPU, %" Binding="{Binding CPU}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Operating Memory"  IsReadOnly="True" Binding="{Binding OperatingMemory}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Threads Count"  IsReadOnly="True" Binding="{Binding ThreadsCount}"></DataGridTextColumn>
                 <DataGridTextColumn Header="User Name"  IsReadOnly="True" Binding="{Binding UserName}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Process Time"  IsReadOnly="True" Binding="{Binding ProcessTime}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Path"  IsReadOnly="True" Binding="{Binding Path}"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <StatusBar Grid.Row="2" Height="30" HorizontalAlignment="Stretch"  Grid.Column="0"
+        <ScrollViewer Grid.Column="1" Grid.Row="1" HorizontalScrollBarVisibility="Auto">
+            <StackPanel >
+                <TextBlock HorizontalAlignment="Center"   TextWrapping="Wrap"  VerticalAlignment="Top" Text="{Binding Modules, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+        </ScrollViewer>
+        <StatusBar Grid.ColumnSpan="2" Grid.Row="2" Height="30" HorizontalAlignment="Right"  Grid.Column="0"
                    VerticalAlignment="Bottom">
-            <Button  Command="{Binding ShowModulesCommand}">
-                <TextBlock Text="Show Modules" FontWeight="Bold"></TextBlock>
+            <Button  Command="{Binding OpenFolderCommand}">
+                <TextBlock Text="Open Folder" FontWeight="Bold"></TextBlock>
             </Button>
-            <Button HorizontalAlignment="Center" Command="{Binding ShowThreadsCommand}">
-                <TextBlock Text="Show Threads" FontWeight="Bold"></TextBlock>
+            <ComboBox Width="100" SelectedIndex="{Binding Choice,  UpdateSourceTrigger=PropertyChanged}"  Height="30" VerticalAlignment="Top">
+                <TextBlock>Modules</TextBlock>
+                <TextBlock>Threads</TextBlock>
+            </ComboBox>
+            <Button  Command="{Binding ShowInfoCommand}">
+                <TextBlock Text="Show Info" FontWeight="Bold"></TextBlock>
             </Button>
-
             <Button HorizontalAlignment="Center" Command="{Binding StopProcessCommand}">
                 <TextBlock Text="Stop process" FontWeight="Bold"></TextBlock>
-            </Button>
-            <Button HorizontalAlignment="Center" Command="{Binding OpenFolderCommand}">
-                <TextBlock Text="Open Folder " FontWeight="Bold"></TextBlock>
             </Button>
         </StatusBar>
 

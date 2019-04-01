@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
+using TaskManager.ViewModels;
 
 namespace TaskManager.Tools.Managers
 {
@@ -11,9 +12,9 @@ namespace TaskManager.Tools.Managers
     {
        public static event Action StopThreads;
         internal static Process CurrentProcess { get; set; }
+
         private static List<Process> _processes = new List<Process>(Process.GetProcesses());
-
-
+        
         internal static void Initialize()
         {
         }

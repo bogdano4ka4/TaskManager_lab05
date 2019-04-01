@@ -1,5 +1,6 @@
 ﻿
 using System;
+using TaskManager.ViewModels;
 using TaskManager.Views;
 
 namespace TaskManager.Tools.Navigation
