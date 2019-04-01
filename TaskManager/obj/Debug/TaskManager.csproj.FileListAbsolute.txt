@@ -21,3 +21,5 @@ C:\Users\Богдана\Desktop\c# лаби\TaskManager\TaskManager\obj\Debug\Vi
 C:\Users\Богдана\Desktop\c# лаби\TaskManager\TaskManager\obj\Debug\GeneratedInternalTypeHelper.g.cs
 C:\Users\Богдана\Desktop\c# лаби\TaskManager\TaskManager\obj\Debug\TaskManager_MarkupCompile.lref
 C:\Users\Богдана\Desktop\c# лаби\TaskManager\TaskManager\obj\Debug\Views\MainView.baml
+C:\Users\Богдана\Desktop\c# лаби\TaskManager\TaskManager\obj\Debug\Views\ShowInfoView.g.cs
+C:\Users\Богдана\Desktop\c# лаби\TaskManager\TaskManager\obj\Debug\Views\ShowInfoView.baml

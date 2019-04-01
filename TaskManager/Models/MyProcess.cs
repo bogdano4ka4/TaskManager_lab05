@@ -1,18 +1,14 @@
-﻿
-
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using TaskManager.Annotations;
-using TaskManager.Tools.Managers;
 
 namespace TaskManager.Models
 {
-    class MyProcess :  Process, INotifyPropertyChanged
+    public class MyProcess : INotifyPropertyChanged
     {
         #region Fields
-        private MyProcess _selectedProcess;
         private string _name;
         private bool _isActive;
         private int _id;
@@ -22,25 +18,24 @@ namespace TaskManager.Models
         private string _userName;
         private string _path;
         private DateTime? _processTime;
-
-        private ProcessModuleCollection _modules;
-        private ProcessThreadCollection _processThreads;
+        private Process _process;
         #endregion
 
         #region Properties
 
         internal MyProcess(Process process)
         {
-           
+            _process = process;
             Name = process.ProcessName;
             Id = process.Id;
             ThreadsCount = process.Threads.Count;
             UserName = process.MachineName; //UserName = Environment.UserName,
             SetPathName(process);
             SetProcessTime(process);
-            // IsActive = false;
+            OperatingMemory = 100 * process.WorkingSet64 / Environment.WorkingSet;
 
         }
+
         public string Name
         {
             get => _name;
@@ -49,7 +44,6 @@ namespace TaskManager.Models
                 _name = value;
                 OnPropertyChanged();
             }
-
         }
 
         public int Id
@@ -87,14 +81,16 @@ namespace TaskManager.Models
         }
         public double OperatingMemory
         {
-            get { return _opMemory; }
+            get
+            {
+               return _opMemory;
+            }
             set
             {
                 _opMemory = value;
                 OnPropertyChanged();
             }
-
-        }
+           }
 
         public int ThreadsCount
         {
@@ -133,33 +129,7 @@ namespace TaskManager.Models
                 OnPropertyChanged();
             }
         }
-
-        public ProcessModuleCollection Modules
-        {
-            get { return _modules; }
-            set
-            {
-                _modules = value;
-                OnPropertyChanged();
-            }
-        }
-        public ProcessThreadCollection Threads
-        {
-            get { return _processThreads; }
-            set
-            {
-                _processThreads = value;
-                OnPropertyChanged();
-            }
-        }
-
         #endregion
-
-        void StopProcess()
-        {
-            StationManager.CurrentProcess.Kill();
-        }
-
         private void SetPathName(Process process)
         {
             try
@@ -171,9 +141,7 @@ namespace TaskManager.Models
                 _path = "Access denied.";
 
             }
-
         }
-
         private void SetProcessTime(Process process)
         {
             try
@@ -185,7 +153,6 @@ namespace TaskManager.Models
 
             }
         }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

@@ -1,5 +1,6 @@
 ﻿
 using System;
+using TaskManager.Models;
 using TaskManager.ViewModels;
 using TaskManager.Views;
 
@@ -12,14 +13,17 @@ namespace TaskManager.Tools.Navigation
 
         }
 
-        protected override void InitializeView(ViewType viewType)
+        protected override void InitializeView(ViewType viewType,MyProcess selectedProcess)
         {
             switch (viewType)
             {
                 case ViewType.TaskManager:
                     ViewsDictionary.Add(viewType, new TaskManagerView());
                     break;
-               
+                case ViewType.ShowInfo:
+                    ViewsDictionary.Add(viewType, new ShowInfoView(selectedProcess));
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(viewType), viewType, null);
             }

@@ -1,13 +1,16 @@
 ﻿
+using TaskManager.Models;
+
 namespace TaskManager.Tools.Navigation
 {
     internal enum ViewType
     {
-        TaskManager
+        TaskManager,
+        ShowInfo
     }
 
     interface INavigationModel
     {
-        void Navigate(ViewType viewType);
+        void Navigate(ViewType viewType,MyProcess selectedProcess);
     }
 }

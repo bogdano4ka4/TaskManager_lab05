@@ -24,7 +24,7 @@ namespace TaskManager
         {
            
             NavigationManager.Instance.Initialize(new InitializationNavigationModel(this));
-            NavigationManager.Instance.Navigate(ViewType.TaskManager);
+            NavigationManager.Instance.Navigate(ViewType.TaskManager,null);
         }
         protected override void OnClosing(CancelEventArgs e)
         {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TaskManager.Models;
 
 
 namespace TaskManager.Tools.Navigation
@@ -24,14 +25,14 @@ namespace TaskManager.Tools.Navigation
             get { return _viewsDictionary; }
         }
 
-        public void Navigate(ViewType viewType)
+        public void Navigate(ViewType viewType, MyProcess selecteProcess)
         {
             if (!ViewsDictionary.ContainsKey(viewType))
-                InitializeView(viewType);
+                InitializeView(viewType,selecteProcess);
             ContentOwner.ContentControl.Content = ViewsDictionary[viewType];
         }
 
-        protected abstract void InitializeView(ViewType viewType);
+        protected abstract void InitializeView(ViewType viewType,MyProcess selectedProcess);
 
     }
 }

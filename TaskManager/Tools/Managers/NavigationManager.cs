@@ -1,5 +1,6 @@
 ﻿
 
+using TaskManager.Models;
 using TaskManager.Tools.Navigation;
 
 namespace TaskManager.Tools.Managers
@@ -34,9 +35,9 @@ namespace TaskManager.Tools.Managers
             _navigationModel = navigationModel;
         }
 
-        internal void Navigate(ViewType viewType)
+        internal void Navigate(ViewType viewType, MyProcess selectedProcess)
         {
-            _navigationModel.Navigate(viewType);
+            _navigationModel.Navigate(viewType,selectedProcess);
         }
 
     }

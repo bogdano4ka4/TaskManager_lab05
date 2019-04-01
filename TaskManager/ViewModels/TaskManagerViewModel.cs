@@ -1,13 +1,16 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
+
 using System.Windows.Input;
 using TaskManager.Models;
 using TaskManager.Tools;
@@ -18,11 +21,10 @@ namespace TaskManager.ViewModels
 {
     class TaskManagerViewModel : INotifyPropertyChanged
     {
-        private List<Process> _processes=StationManager.Processes;
+        private List<MyProcess> _processes;
         private Thread _workingThread;
         private CancellationToken _token;
         private CancellationTokenSource _tokenSource;
-        private int _choiceIndex;
         private MyProcess _selectedProcess;
         private MyProcess _saveSelectedProcess;
         private string _modules;
@@ -33,19 +35,14 @@ namespace TaskManager.ViewModels
         private ICommand _openCommand;
         #endregion
 
-        public int Choice
+        public List<MyProcess> Processes
         {
-            get => _choiceIndex;
+            get { return _processes; }
             set
             {
-                _choiceIndex = value;
+                _processes = value;
                 OnPropertyChanged();
             }
-        }
-
-        public IEnumerable<MyProcess> Processes
-        {
-            get { return ShowMyProcesses(); }
            
         }
         public MyProcess SelectedProcess
@@ -68,13 +65,7 @@ namespace TaskManager.ViewModels
             }
         }
 
-        private IEnumerable<MyProcess> ShowMyProcesses()
-        {
-            _processes = new List<Process>(StationManager.Processes);
-            var proccesList = (from item in _processes
-                select new MyProcess(item));
-           return proccesList;
-        }
+      
        
         public ICommand StopProcessCommand => _stopProccesCommand ?? (_stopProccesCommand = new RelayCommand<object>(StopProcessImplementation, CanExecuteCommand));
         public ICommand ShowInfoCommand => _showInfoCommand ?? (_showInfoCommand = new RelayCommand<object>(ShowModulesImplementation, CanExecuteCommand));
@@ -82,24 +73,25 @@ namespace TaskManager.ViewModels
 
         private void OpenFolderImplementation(object obj)
         {
-            //TODO create better method
-            Process pr = Process.GetProcessById(_selectedProcess.Id);
-            try
+            if (_selectedProcess.Path != "Access denied.")
             {
-                Process.Start(SelectedProcess.Path);
-                string str = pr.MainModule.FileName;
-                string re = '\\' + pr.MainModule.ModuleName;
-                str = str.Replace(re, "");
-                Process.Start(str);
+                try
+                {
+                    Process.Start(Path.GetDirectoryName(_selectedProcess.Path));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ex");
+                }
+            }
+            else
+            {
+                MessageBox.Show("ss");
 
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
+          
         }
-
+        
         private void StopProcessImplementation(object obj)
         {
             Process pr= Process.GetProcessById(_selectedProcess.Id);
@@ -119,51 +111,47 @@ namespace TaskManager.ViewModels
 
         private void ShowModulesImplementation(object obj)
         {
-            Process pr = Process.GetProcessById(_selectedProcess.Id);
-            switch (Choice)
-            {
-                case 0:
-                    //  MessageBox.Show(pr.ProcessName);
-                    int i = 0;
-                    try
-                    {
-                        Modules = "";
-                        Modules += $"List of modules : ({pr.ProcessName}) \n";
-                        ProcessModuleCollection modules = pr.Modules;
-                        foreach (ProcessModule module in modules)
-                            Modules += (i++) + ". " + module.ModuleName + " - " + module.FileName + "\n";
-                            
-                    }
-                    catch (Win32Exception ex)
-                    {
-                        Modules += ex.Message;
-                    }
-                    // MessageBox.Show(Modules);
-                    break;
-                case 1:
-                    try
-                    {
-                        Modules = "";
-                        Modules += $"List of threads : ({pr.ProcessName}) \n";
-                        ProcessThreadCollection th = pr.Threads;
-                        foreach (ProcessThread thread in th)
-                            Modules += thread.Id + " | " + thread.ThreadState + " | " + thread.StartTime+"\n";
-                    }
-                    catch (Win32Exception ex1)
-                    {
-                        Modules += ex1.Message;
-                    }
-                    break;
-                default:
-                    MessageBox.Show("Default");
-                    break;
-            }
-            
-            
-       
+            NavigationManager.Instance.Navigate(ViewType.ShowInfo, _selectedProcess);
+            //Process pr = Process.GetProcessById(_selectedProcess.Id);
+            //switch (Choice)
+            //{
+            //    case 0:
+            //        //  MessageBox.Show(pr.ProcessName);
+            //        int i = 0;
+            //        try
+            //        {
+            //            Modules = "";
+            //            Modules += $"List of modules : ({pr.ProcessName}) \n";
+            //            ProcessModuleCollection modules = pr.Modules;
+            //            foreach (ProcessModule module in modules)
+            //                Modules += (i++) + ". " + module.ModuleName + " - " + module.FileName + "\n";
 
+            //        }
+            //        catch (Win32Exception ex)
+            //        {
+            //            Modules += ex.Message;
+            //        }
+            //        break;
+            //    case 1:
+            //        try
+            //        {
+            //            Modules = "";
+            //            Modules += $"List of threads : ({pr.ProcessName}) \n";
+            //            ProcessThreadCollection th = pr.Threads;
+            //            foreach (ProcessThread thread in th)
+            //                Modules += thread.Id + " | " + thread.ThreadState + " | " + thread.StartTime + "\n";
+            //        }
+            //        catch (Win32Exception ex1)
+            //        {
+            //            Modules += ex1.Message;
+            //        }
+
+            //        break;
+            //    default:
+            //        MessageBox.Show("Default");
+            //        break;
+            //}
         }
-
 
         private bool CanExecuteCommand(object obj)
         {
@@ -173,13 +161,36 @@ namespace TaskManager.ViewModels
 
         internal TaskManagerViewModel()
         {
+            Processes = new List<MyProcess>();
+            var processes = Process.GetProcesses();
+            foreach (Process pr in processes)
+            {
+                _processes.Add(new MyProcess(pr));
+            }
 
-            _processes = new List<Process>(StationManager.GetProcesses());
-        
-           _tokenSource = new CancellationTokenSource();
-            _token = _tokenSource.Token;
-            StartWorkingThread();
-            StationManager.StopThreads += StopWorkingThread;
+            UpdateData();
+
+            //  _tokenSource = new CancellationTokenSource();
+            // _token = _tokenSource.Token;
+            //StartWorkingThread();
+            //StationManager.StopThreads += StopWorkingThread;
+        }
+
+        private async void UpdateData()
+        {
+            while (true)
+            {
+                List<MyProcess> newProcesses = new List<MyProcess>();
+                await Task.Run(() =>
+                {
+                    Thread.Sleep(5000);
+                    var processesArray = Process.GetProcesses();
+                    foreach (Process pr in processesArray)
+                        newProcesses.Add(new MyProcess(pr));
+                    
+                });
+                Processes = newProcesses;
+            }
         }
 
         private void StartWorkingThread()
