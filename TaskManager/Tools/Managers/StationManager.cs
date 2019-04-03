@@ -10,10 +10,9 @@ namespace TaskManager.Tools.Managers
 {
     internal static class StationManager
     {
-       public static event Action StopThreads;
-        internal static Process CurrentProcess { get; set; }
+        public static event Action StopThreads;
 
-        private static List<Process> _processes = new List<Process>(Process.GetProcesses());
+        private static List<Process> _processes;
         
         internal static void Initialize()
         {
@@ -24,12 +23,6 @@ namespace TaskManager.Tools.Managers
             _processes = new List<Process>(Process.GetProcesses());
             return _processes;
         }
-
-        internal static List<Process> Processes
-        {
-            get { return _processes; }
-        }
-
         internal static void CloseApp()
         {
             MessageBox.Show("ShutDown");

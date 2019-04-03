@@ -21,7 +21,10 @@ namespace TaskManager.Tools.Navigation
                     ViewsDictionary.Add(viewType, new TaskManagerView());
                     break;
                 case ViewType.ShowInfo:
-                    ViewsDictionary.Add(viewType, new ShowInfoView(selectedProcess));
+                    if (ViewsDictionary.ContainsKey(viewType))
+                        ViewsDictionary[viewType] = new ShowInfoView(selectedProcess);
+                       else
+                        ViewsDictionary.Add(viewType, new ShowInfoView(selectedProcess));
                     break;
 
                 default:

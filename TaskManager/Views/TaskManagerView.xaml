@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="650" d:DesignWidth="800">
+             d:DesignHeight="700" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="*"></ColumnDefinition>
@@ -18,29 +18,32 @@
 
             <Label HorizontalAlignment="Center"  VerticalAlignment="Center"  Content="Sort: "></Label>
             <ComboBox SelectedIndex="{Binding SortIndex,  UpdateSourceTrigger=PropertyChanged}"  Height="30" VerticalAlignment="Top">
+                <TextBlock>Default</TextBlock>
                 <TextBlock>Name</TextBlock>
+                <TextBlock>Is Active</TextBlock>
                 <TextBlock>Id</TextBlock>
                 <TextBlock>CPU</TextBlock>
-                <TextBlock>Operating system</TextBlock>
-                <TextBlock>Memory</TextBlock>
+                <TextBlock>Operating memory</TextBlock>
                 <TextBlock>Threads count</TextBlock>
-                <TextBlock>User Name</TextBlock>
+                <TextBlock>Process Time</TextBlock>
+                <TextBlock>Path</TextBlock>
             </ComboBox>
         </StatusBar>
-        <DataGrid Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center"  ItemsSource="{Binding Processes, Mode=OneWay}" SelectedItem ="{Binding SelectedProcess, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False"  >
+        <DataGrid Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center"  ItemsSource="{Binding Processes, Mode=OneWay}" SelectedItem ="{Binding SelectedProcess, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Background="Transparent" AutoGenerateColumns="False" HorizontalGridLinesBrush="DarkGray"
+                  RowBackground="LightGray" AlternatingRowBackground="White">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name"  Binding="{Binding Name}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Is Active"  IsReadOnly="True" Binding="{Binding IsActive}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Id" Binding="{Binding Id}"></DataGridTextColumn>
-                <DataGridTextColumn Header="CPU, %" Binding="{Binding CPU}"></DataGridTextColumn>
+                <DataGridTextColumn Header="CPU, %" Binding="{Binding Cpu}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Operating Memory"  IsReadOnly="True" Binding="{Binding OperatingMemory}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Threads Count"  IsReadOnly="True" Binding="{Binding ThreadsCount}"></DataGridTextColumn>
-                <DataGridTextColumn Header="User Name"  IsReadOnly="True" Binding="{Binding UserName}"></DataGridTextColumn>
+              
                 <DataGridTextColumn Header="Process Time"  IsReadOnly="True" Binding="{Binding ProcessTime}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Path"  IsReadOnly="True" Binding="{Binding Path}"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <StatusBar Grid.ColumnSpan="2" Grid.Row="2" Height="30" HorizontalAlignment="Right"  Grid.Column="0"
+        <StatusBar Grid.Row="2" Height="30" HorizontalAlignment="Right"  Grid.Column="0"
                    VerticalAlignment="Bottom">
             <Button  Command="{Binding OpenFolderCommand}">
                 <TextBlock Text="Open Folder" FontWeight="Bold"></TextBlock>

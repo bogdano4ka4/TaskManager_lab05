@@ -27,7 +27,7 @@ namespace TaskManager.Tools.Navigation
 
         public void Navigate(ViewType viewType, MyProcess selecteProcess)
         {
-            if (!ViewsDictionary.ContainsKey(viewType))
+            if ((!ViewsDictionary.ContainsKey(viewType))||viewType==ViewType.ShowInfo)
                 InitializeView(viewType,selecteProcess);
             ContentOwner.ContentControl.Content = ViewsDictionary[viewType];
         }

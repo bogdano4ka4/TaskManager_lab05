@@ -1,146 +1,68 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using TaskManager.Annotations;
 
 namespace TaskManager.Models
 {
-    public class MyProcess : INotifyPropertyChanged
+    public class MyProcess
     {
+
         #region Fields
-        private string _name;
-        private bool _isActive;
-        private int _id;
-        private double _cpu=-1;
-        private double _opMemory=-1;//VirtualMemorySize64
-        private int _threadsCount;//Process.GetCurrentProcess().Threads.Count ?
-        private string _userName;
-        private string _path;
-        private DateTime? _processTime;
-        private Process _process;
+       
+        private PerformanceCounter CounterCpu { get; }
+        private PerformanceCounter CounterOperationMemory { get; }
         #endregion
 
         #region Properties
 
         internal MyProcess(Process process)
         {
-            _process = process;
             Name = process.ProcessName;
             Id = process.Id;
             ThreadsCount = process.Threads.Count;
-            UserName = process.MachineName; //UserName = Environment.UserName,
             SetPathName(process);
             SetProcessTime(process);
-            OperatingMemory = 100 * process.WorkingSet64 / Environment.WorkingSet;
+            CounterCpu= new PerformanceCounter("Process", "% Processor Time", process.ProcessName, true);
+            IsActive = process.Responding;
+            CounterOperationMemory = new PerformanceCounter("Process", "Working Set", process.ProcessName, true);
 
         }
 
-        public string Name
-        {
-            get => _name;
-            set
-            {
-                _name = value;
-                OnPropertyChanged();
-            }
-        }
+        public string Name { get; set; }
+        public int Id { get; set; }
+        public bool IsActive { get; set; }
 
-        public int Id
-        {
-            get => _id;
-            set
-            {
-                _id = value;
-                OnPropertyChanged();
-            }
-        }
-        public bool IsActive
-        {
-            get => _isActive;
-            set
-            {
-                _isActive = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public double CPU
+        public double Cpu
         {
             get
             {
-                //TODO method that counts CPU
-                return 0.0;
+               return  CounterCpu.NextValue() / Environment.ProcessorCount;
             }
             set
             {
-                _cpu = value;
-                OnPropertyChanged();
-            }
 
+            }
         }
+
         public double OperatingMemory
         {
             get
             {
-               return _opMemory;
+                return CounterOperationMemory.NextValue() / Environment.ProcessorCount;
             }
-            set
-            {
-                _opMemory = value;
-                OnPropertyChanged();
-            }
-           }
-
-        public int ThreadsCount
-        {
-            get { return _threadsCount; }
-            set
-            {
-                _threadsCount = value;
-                OnPropertyChanged();
-            }
-        }
-        public string UserName
-        {
-            get { return _userName; }
-            set
-            {
-                _userName = value;
-                OnPropertyChanged();
-            }
+            set { }
         }
 
-        public string Path
-        {
-            get { return _path; }
-            set
-            {
-                _path = value;
-                OnPropertyChanged();
-            }
-        }
-        public DateTime? ProcessTime
-        {
-            get { return _processTime; }
-            set
-            {
-                _processTime = value;
-                OnPropertyChanged();
-            }
-        }
+        public int ThreadsCount { get; set; }
+        public string Path { get; set; }
+        public DateTime? ProcessTime { get; set; }
         #endregion
-        private void SetPathName(Process process)
+       
+        public void Relaod()
         {
-            try
-            {
-                _path = process.MainModule.FileName;
-            }
-            catch (Win32Exception)
-            {
-                _path = "Access denied.";
+            Cpu= CounterCpu.NextValue() / Environment.ProcessorCount;
+            OperatingMemory= CounterOperationMemory.NextValue() / Environment.ProcessorCount;
 
-            }
         }
         private void SetProcessTime(Process process)
         {
@@ -153,12 +75,19 @@ namespace TaskManager.Models
 
             }
         }
-        public event PropertyChangedEventHandler PropertyChanged;
 
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void SetPathName(Process process)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            try
+            {
+                Path = process.MainModule.FileName;
+            }
+            catch (Win32Exception)
+            {
+                Path = "Access denied.";
+
+            }
         }
+
     }
 }

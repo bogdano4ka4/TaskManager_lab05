@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
-using System.Net.Configuration;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
 using TaskManager.Annotations;
 using TaskManager.Models;
@@ -17,17 +12,18 @@ namespace TaskManager.ViewModels
 {
     class ShowInfoViewModel : INotifyPropertyChanged
     {
-        private MyProcess _selectedProcess { get; set; }
+        #region Fields
+        private MyProcess SelectedProcess { get;}
         private ICommand _backCommand;
-        private Process _curProcess = StationManager.CurrentProcess;
-        private ICommand _openProcess;
 
         private ProcessModuleCollection _modules;
         private ProcessThreadCollection _threads;
+        #endregion
+
 
         public ProcessModuleCollection Modules
         {
-            get { return _modules; }
+            get => _modules;
             set
             {
                 _modules = value;
@@ -44,10 +40,10 @@ namespace TaskManager.ViewModels
             }
         }
 
-        public ShowInfoViewModel(MyProcess selectdProcess)
+        public ShowInfoViewModel(MyProcess selectedProcess)
         {
-            _selectedProcess = selectdProcess;
-            Process pr = Process.GetProcessById(_selectedProcess.Id);
+            SelectedProcess = selectedProcess;
+            Process pr = Process.GetProcessById(SelectedProcess.Id);
             try
             {
                 Modules = pr.Modules;
@@ -65,26 +61,12 @@ namespace TaskManager.ViewModels
             {
                 Threads = null;
             }
-           
-
         }
-
-
-        
         public ICommand BackCommand => _backCommand ?? (_backCommand = new RelayCommand<object>(BackImplementation));
-        public ICommand OpenFolderCommand => _openProcess ?? (_openProcess = new RelayCommand<object>(OpenFolderImplementation));
-
-        private void OpenFolderImplementation(object obj)
-        {
-
-            MessageBox.Show(_curProcess.ProcessName);
-
-        }
-
-
+      
+       
         private void BackImplementation(object obj)
         {
-
             NavigationManager.Instance.Navigate(ViewType.TaskManager,null);
         }
 
