@@ -58,9 +58,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Models\MyProcess.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Models\MyProcess.cs" />
+    <Compile Include="Tools\PerformanceInfo.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Tools\BaseViewModel.cs" />
     <Compile Include="Tools\ILoaderOwner.cs" />

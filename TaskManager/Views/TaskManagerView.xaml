@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="800">
-    <Grid>
+    <Grid Background="CadetBlue">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
@@ -14,10 +14,10 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
-        <StatusBar Grid.ColumnSpan="2" Grid.Row="0" Height="30" HorizontalAlignment="Stretch">
+        <StatusBar Background="CadetBlue" Grid.ColumnSpan="2" Grid.Row="0" Height="30" HorizontalAlignment="Stretch">
 
             <Label HorizontalAlignment="Center"  VerticalAlignment="Center"  Content="Sort: "></Label>
-            <ComboBox SelectedIndex="{Binding SortIndex,  UpdateSourceTrigger=PropertyChanged}"  Height="30" VerticalAlignment="Top">
+            <ComboBox Background="CadetBlue" SelectedIndex="{Binding SortIndex,  UpdateSourceTrigger=PropertyChanged}"  Height="30" VerticalAlignment="Top">
                 <TextBlock>Default</TextBlock>
                 <TextBlock>Name</TextBlock>
                 <TextBlock>Is Active</TextBlock>
@@ -30,28 +30,28 @@
             </ComboBox>
         </StatusBar>
         <DataGrid Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center"  ItemsSource="{Binding Processes, Mode=OneWay}" SelectedItem ="{Binding SelectedProcess, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Background="Transparent" AutoGenerateColumns="False" HorizontalGridLinesBrush="DarkGray"
-                  RowBackground="LightGray" AlternatingRowBackground="White">
+                  RowBackground="AliceBlue" AlternatingRowBackground="White">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name"  Binding="{Binding Name}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Name"  Binding="{Binding Name}" ></DataGridTextColumn>
                 <DataGridTextColumn Header="Is Active"  IsReadOnly="True" Binding="{Binding IsActive}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Id" Binding="{Binding Id}"></DataGridTextColumn>
-                <DataGridTextColumn Header="CPU, %" Binding="{Binding Cpu}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Operating Memory"  IsReadOnly="True" Binding="{Binding OperatingMemory}"></DataGridTextColumn>
+                <DataGridTextColumn Header="CPU, %" Binding="{Binding Cpu, UpdateSourceTrigger=PropertyChanged}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Operating Memory"  IsReadOnly="True" Binding="{Binding OperatingMemory, UpdateSourceTrigger=PropertyChanged}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Threads Count"  IsReadOnly="True" Binding="{Binding ThreadsCount}"></DataGridTextColumn>
               
                 <DataGridTextColumn Header="Process Time"  IsReadOnly="True" Binding="{Binding ProcessTime}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Path"  IsReadOnly="True" Binding="{Binding Path}"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <StatusBar Grid.Row="2" Height="30" HorizontalAlignment="Right"  Grid.Column="0"
+        <StatusBar Background="CadetBlue" Grid.Row="2" Height="30" HorizontalAlignment="Right"  Grid.Column="0"
                    VerticalAlignment="Bottom">
-            <Button  Command="{Binding OpenFolderCommand}">
+            <Button Background="Aquamarine"  Command="{Binding OpenFolderCommand}">
                 <TextBlock Text="Open Folder" FontWeight="Bold"></TextBlock>
             </Button>
-           <Button  Command="{Binding ShowInfoCommand}">
+            <Button Background="Aquamarine"  Command="{Binding ShowInfoCommand}">
                 <TextBlock Text="Show Info" FontWeight="Bold"></TextBlock>
             </Button>
-            <Button HorizontalAlignment="Center" Command="{Binding StopProcessCommand}">
+            <Button Background="Aquamarine" HorizontalAlignment="Center" Command="{Binding StopProcessCommand}">
                 <TextBlock Text="Stop process" FontWeight="Bold"></TextBlock>
             </Button>
         </StatusBar>

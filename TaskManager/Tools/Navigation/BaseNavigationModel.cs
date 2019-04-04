@@ -7,12 +7,11 @@ namespace TaskManager.Tools.Navigation
     internal abstract class BaseNavigationModel : INavigationModel
     {
         private readonly IContentOwner _contentOwner;
-        private readonly Dictionary<ViewType, INavigatable> _viewsDictionary;
 
         protected BaseNavigationModel(IContentOwner contentOwner)
         {
             _contentOwner = contentOwner;
-            _viewsDictionary = new Dictionary<ViewType, INavigatable>();
+            ViewsDictionary = new Dictionary<ViewType, INavigatable>();
         }
 
         protected IContentOwner ContentOwner
@@ -20,15 +19,12 @@ namespace TaskManager.Tools.Navigation
             get { return _contentOwner; }
         }
 
-        protected Dictionary<ViewType, INavigatable> ViewsDictionary
-        {
-            get { return _viewsDictionary; }
-        }
+        protected Dictionary<ViewType, INavigatable> ViewsDictionary { get; }
 
-        public void Navigate(ViewType viewType, MyProcess selecteProcess)
+        public void Navigate(ViewType viewType, MyProcess selectedProcess)
         {
             if ((!ViewsDictionary.ContainsKey(viewType))||viewType==ViewType.ShowInfo)
-                InitializeView(viewType,selecteProcess);
+                InitializeView(viewType, selectedProcess);
             ContentOwner.ContentControl.Content = ViewsDictionary[viewType];
         }
 

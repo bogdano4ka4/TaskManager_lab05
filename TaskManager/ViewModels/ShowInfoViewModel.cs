@@ -15,7 +15,6 @@ namespace TaskManager.ViewModels
         #region Fields
         private MyProcess SelectedProcess { get;}
         private ICommand _backCommand;
-
         private ProcessModuleCollection _modules;
         private ProcessThreadCollection _threads;
         #endregion
