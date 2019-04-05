@@ -1,6 +1,4 @@
-﻿
-
-using TaskManager.Models;
+﻿using TaskManager.Models;
 using TaskManager.Tools.Navigation;
 
 namespace TaskManager.Tools.Managers

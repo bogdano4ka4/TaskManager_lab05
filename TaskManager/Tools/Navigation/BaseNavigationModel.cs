@@ -6,18 +6,13 @@ namespace TaskManager.Tools.Navigation
 {
     internal abstract class BaseNavigationModel : INavigationModel
     {
-        private readonly IContentOwner _contentOwner;
-
         protected BaseNavigationModel(IContentOwner contentOwner)
         {
-            _contentOwner = contentOwner;
+            ContentOwner = contentOwner;
             ViewsDictionary = new Dictionary<ViewType, INavigatable>();
         }
 
-        protected IContentOwner ContentOwner
-        {
-            get { return _contentOwner; }
-        }
+        protected IContentOwner ContentOwner { get; }
 
         protected Dictionary<ViewType, INavigatable> ViewsDictionary { get; }
 

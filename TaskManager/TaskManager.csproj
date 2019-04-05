@@ -62,8 +62,6 @@
     <Compile Include="Tools\PerformanceInfo.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Tools\BaseViewModel.cs" />
-    <Compile Include="Tools\ILoaderOwner.cs" />
-    <Compile Include="Tools\Managers\LoaderManager.cs" />
     <Compile Include="Tools\Managers\NavigationManager.cs" />
     <Compile Include="Tools\Managers\StationManager.cs" />
     <Compile Include="Tools\Navigation\BaseNavigationModel.cs" />
@@ -72,7 +70,6 @@
     <Compile Include="Tools\Navigation\INavigationModel.cs" />
     <Compile Include="Tools\Navigation\InitializationNavigationModel.cs" />
     <Compile Include="Tools\RelayCommand.cs" />
-    <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\ShowInfoViewModel.cs" />
     <Compile Include="ViewModels\TaskManagerViewModel.cs" />
     <Compile Include="Views\MainView.xaml.cs">

@@ -1,7 +1,5 @@
-﻿
-using System;
+﻿using System;
 using TaskManager.Models;
-using TaskManager.ViewModels;
 using TaskManager.Views;
 
 namespace TaskManager.Tools.Navigation
@@ -26,7 +24,6 @@ namespace TaskManager.Tools.Navigation
                        else
                         ViewsDictionary.Add(viewType, new ShowInfoView(selectedProcess));
                     break;
-
                 default:
                     throw new ArgumentOutOfRangeException(nameof(viewType), viewType, null);
             }

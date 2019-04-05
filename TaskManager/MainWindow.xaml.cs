@@ -8,15 +8,12 @@ namespace TaskManager
 {
     public partial class MainWindow : Window, IContentOwner
     {
-        public ContentControl ContentControl
-        {
-            get { return _contentControl; }
-        }
+        public ContentControl ContentControl => _contentControl;
 
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainWindowViewModel();
+            DataContext = new TaskManagerViewModel();
             InitializeApplication();
         }
 

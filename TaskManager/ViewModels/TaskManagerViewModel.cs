@@ -21,13 +21,13 @@ namespace TaskManager.ViewModels
     {
         private ObservableCollection<MyProcess> _processes;
         private MyProcess _selectedProcess;
-      
+        private int _sortIndex;
+        private Thread _moduleThread;
+        private Thread _dataThread;
         #region Commands
-
         private ICommand _showInfoCommand;
         private ICommand _stopProcessCommand;
         private ICommand _openCommand;
-
         #endregion
 
         internal TaskManagerViewModel()
@@ -35,17 +35,18 @@ namespace TaskManager.ViewModels
             Processes = new ObservableCollection<MyProcess>();
             var processes = Process.GetProcesses();
             foreach (Process pr in processes)
-            {
                 _processes.Add(new MyProcess(pr));
-            }
+            _moduleThread = new Thread(UpdateModules);
+            _moduleThread.Start();
+            _dataThread = new Thread(UpdateTaskManager);
+            _dataThread.Start();
 
-            new Thread(UpdateTaskManager).Start();
-            new Thread(UpdateModules).Start();
         }
+
 
         public ObservableCollection<MyProcess> Processes
         {
-            get { return _processes; }
+            get => _processes;
             set
             {
                 _processes = value;
@@ -64,10 +65,10 @@ namespace TaskManager.ViewModels
             }
         }
 
-        private int _sortIndex;
+       
         public int SortIndex
         {
-            get { return _sortIndex; }
+            get => _sortIndex;
             set
             {
                 _sortIndex = value;
@@ -95,7 +96,6 @@ namespace TaskManager.ViewModels
             {
                 try
                 {
-                    //TODO catch all exceptions
                     Process.Start(Path.GetDirectoryName(_selectedProcess.Path));
                 }
                 catch (ArgumentException ex)
@@ -113,12 +113,13 @@ namespace TaskManager.ViewModels
 
         private void StopProcessImplementation(object obj)
         {
+
             Process pr = Process.GetProcessById(_selectedProcess.Id);
             try
             {
                 pr.Kill();
             }
-            catch (ArgumentException e)
+             catch (System.ArgumentException e)
             {
                 MessageBox.Show(e.Message);
             }
@@ -128,23 +129,14 @@ namespace TaskManager.ViewModels
 
             }
         }
-
-
         private void ShowModulesImplementation(object obj)
         {
             NavigationManager.Instance.Navigate(ViewType.ShowInfo, SelectedProcess);
         }
 
-        private bool CanExecuteCommand(object obj)
-        {
-            return SelectedProcess != null;
-        }
-
-
-        
         private async void Sort(ObservableCollection<MyProcess> collection)
         {
-            ObservableCollection<MyProcess> newProcesses = null;
+            ObservableCollection<MyProcess> updateMyProcesses = null;
             switch (SortIndex)
             {
                 case 0:
@@ -152,57 +144,61 @@ namespace TaskManager.ViewModels
                     return;
                 case 1:
                     await Task.Run(() =>
-                        newProcesses = new ObservableCollection<MyProcess>(collection.OrderBy(i => i.Name)));
+                        updateMyProcesses = new ObservableCollection<MyProcess>(collection.OrderBy(i => i.Name)));
                     break;
                 case 2:
                     await Task.Run(() =>
-                        newProcesses = new ObservableCollection<MyProcess>(collection.OrderBy(i => i.IsActive)));
+                        updateMyProcesses = new ObservableCollection<MyProcess>(collection.OrderBy(i => i.IsActive)));
                     break;
-                   
+
                 case 3:
                     await Task.Run(() =>
-                        newProcesses = new ObservableCollection<MyProcess>(collection.OrderBy(i => i.Id)));
+                        updateMyProcesses = new ObservableCollection<MyProcess>(collection.OrderBy(i => i.Id)));
                     break;
 
                 case 4:
                     await Task.Run(() =>
-                        newProcesses = new ObservableCollection<MyProcess>(collection.OrderBy(i => i.Cpu)));
+                        updateMyProcesses = new ObservableCollection<MyProcess>(collection.OrderBy(i => i.Cpu)));
                     break;
                 case 5:
                     await Task.Run(() =>
-                        newProcesses = new ObservableCollection<MyProcess>(collection.OrderBy(i => i.OperatingMemory)));
+                        updateMyProcesses =
+                            new ObservableCollection<MyProcess>(collection.OrderBy(i => i.OperatingMemory)));
                     break;
                 case 6:
                     await Task.Run(() =>
-                        newProcesses = new ObservableCollection<MyProcess>(collection.OrderBy(i => i.ThreadsCount)));
+                        updateMyProcesses =
+                            new ObservableCollection<MyProcess>(collection.OrderBy(i => i.ThreadsCount)));
                     break;
                 case 7:
                     await Task.Run(() =>
-                        newProcesses = new ObservableCollection<MyProcess>(collection.OrderBy(i => i.ProcessTime)));
+                        updateMyProcesses =
+                            new ObservableCollection<MyProcess>(collection.OrderBy(i => i.ProcessTime)));
                     break;
                 case 8:
                     await Task.Run(() =>
-                        newProcesses = new ObservableCollection<MyProcess>(collection.OrderBy(i => i.Path)));
+                        updateMyProcesses = new ObservableCollection<MyProcess>(collection.OrderBy(i => i.Path)));
                     break;
             }
-            Processes = newProcesses;
-        }
 
+            Processes = updateMyProcesses;
+        }
 
         private List<MyProcess> ReturnNewProcessList()
         {
             List<MyProcess> newProcesses = Processes.ToList();
 
             var processesArray = Process.GetProcesses();
-            List<MyProcess> newMyProcess = new List<MyProcess>();
+            List<MyProcess> processArrayList = new List<MyProcess>();
 
             foreach (var pr in processesArray)
-                newMyProcess.Add(new MyProcess(pr));
+                processArrayList.Add(new MyProcess(pr));
+
             for (int i = newProcesses.Count - 1; i >= 0; --i)
-                if (!newMyProcess.Contains(newProcesses[i]))
+                if (!processArrayList.Contains(newProcesses[i]))
                     newProcesses.RemoveAt(i);
 
-            foreach (MyProcess pr in newMyProcess)
+            foreach (MyProcess pr in processArrayList)
                 if (!newProcesses.Contains(pr))
                     newProcesses.Add(pr);
 
@@ -211,28 +207,34 @@ namespace TaskManager.ViewModels
 
         private void UpdateTaskManager()
         {
-            while (true)
+            while (StationManager.Stop)
             {
                 Sort(new ObservableCollection<MyProcess>(ReturnNewProcessList()));
                 Thread.Sleep(5000);
             }
+            _dataThread.Join(2000);
+            _dataThread.Abort();
+            _dataThread = null;
         }
+
         private void UpdateModules()
         {
-            while (true)
+            while (StationManager.Stop)
             {
-                
                 foreach (MyProcess pr in Processes)
-                    pr.Relaod();
-
+                    pr.UpdateFields();
                 Processes=new ObservableCollection<MyProcess>(Processes);
                 Thread.Sleep(2000);
             }
+            _moduleThread.Join(2000);
+            _moduleThread.Abort();
+            _moduleThread = null;
         }
 
-
-
-
+        private bool CanExecuteCommand(object obj)
+        {
+            return SelectedProcess != null;
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
